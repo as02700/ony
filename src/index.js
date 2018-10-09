@@ -212,32 +212,35 @@ function IR(entry) {
   this.parse = this.parse.bind(this);
 
   this.declaration = new Declaration(entry);
-  this.stack = [[]];
+  this.tokensStack = [[]];
+  this.parseStack = [];
 }
 
 IR.prototype.in = function() {
-  this.stack.push([]);
+  this.tokensStack.push([]);
 };
 
 IR.prototype.out = function(func, input, cursor, len) {
-  var xs = this.stack.pop();
+  var xs = this.tokensStack.pop();
   if (len != undefined) {
     var x = func.call(null, input, cursor, len, xs);
-    var xs2 = this.stack.pop();
+    var xs2 = this.tokensStack.pop();
     xs2.push(x);
-    this.stack.push(xs2);
+    this.tokensStack.push(xs2);
   }
 };
 
-IR.prototype.__aspect = function(ctor, func, input, cursor) {
+IR.prototype.__aspect = function(ctor, func, name, input, cursor) {
   ctor && this.in();
+  var i = this.parseStack.push([cursor]);
   var len = func(input, cursor);
+  this.parseStack[i - 1].push(len, name);
   ctor && this.out(ctor, input, cursor, len);
   return len;
 };
 
 IR.prototype.decl = function(name, func, ctor) {
-  return this.declaration.decl(name, this.__aspect.bind(this, ctor, func));
+  return this.declaration.decl(name, this.__aspect.bind(this, ctor, func, name));
 };
 
 IR.prototype.ref = function() {
@@ -249,13 +252,30 @@ IR.prototype.mark = function() {
 };
 
 IR.prototype.parse = function(text) {
-  this.stack = [[]];
+  this.tokensStack = [[]];
+  this.parseStack = [];
   var total = text.length;
   var consumed = this.declaration.parse(text);
   if (consumed == total) {
-    return this.stack[0][0];
+    return this.tokensStack[0][0];
   }
-  throw new Error(['Can not be completely resolved; total:', total, '; consumed:', consumed].join(''));
+  var len = this.parseStack.length;
+  var latest;
+  for (var i = len - 1; i >= 0; --i) {
+    latest = this.parseStack[i];
+    if (latest[1]) {
+      break;
+    }
+  }
+  throw new Error(
+    ['Can not be completely resolved. ']
+    .concat(
+      latest
+      ? ['Fail at ', latest[0] + 1, ' "', text[latest[0] + 1], '" "', text.slice(Math.max(latest[0] - 10, 0), latest[0] + 10), '"']
+      : ''
+    )
+    .join('')
+  );
 };
 
 module.exports = {
