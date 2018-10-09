@@ -1,0 +1,11 @@
+{
+  "name": "ony",
+  "version": "1.0.0",
+  "description": "grammar parser",
+  "main": "src/index.js",
+  "scripts": {
+    "example": "webpack -o example/bundle.js --mode=development"
+  },
+  "author": "as02700",
+  "license": "ISC"
+}
