@@ -4,7 +4,8 @@
   "description": "grammar parser",
   "main": "src/index.js",
   "scripts": {
-    "example": "webpack -o example/bundle.js --mode=development"
+    "example": "webpack -o example/bundle.js --mode=development",
+    "example:json": "webpack -o example/bundle.js --mode=development example/json.js"
   },
   "author": "as02700",
   "license": "ISC"

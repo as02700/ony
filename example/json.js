@@ -77,11 +77,11 @@ ir.decl('name',
   ),
   Identifier
 );
-ir.decl('null', text('null'), token);
+ir.decl('null', text('null'), NullLiteral);
 ir.decl('string',
   alternative(
     series(
-      ir.mark('$quote', chars('"', "'", '`')),
+      ir.mark('$quote', chars('"', "'")),
       any(
         alternative(
           series(text('\\'), ir.mark('$quote')),
@@ -91,7 +91,7 @@ ir.decl('string',
       ir.mark('$quote')
     ),
   ),
-  NullLiteral
+  StringLiteral
 );
 ir.decl('array',
   series(
@@ -99,7 +99,7 @@ ir.decl('array',
     any(ir.ref('WS')),
     any(
       series(
-        option(ir.ref('json')),
+        option(ir.ref('value')),
         any(ir.ref('WS')),
         option(text(',')),
         any(ir.ref('WS'))
@@ -115,7 +115,7 @@ ir.decl('key-val',
     any(ir.ref('WS')),
     text(':'),
     any(ir.ref('WS')),
-    ir.ref('json'),
+    ir.ref('value'),
   ),
   KeyValuePairs
 );
@@ -141,12 +141,17 @@ ir.decl('object',
   ),
   ObjectLiteral
 );
-ir.decl('json', alternative(
+ir.decl('value', alternative(
   ir.ref('null'),
   ir.ref('number'),
   ir.ref('string'),
   ir.ref('array'),
   ir.ref('object')
+));
+ir.decl('json', series(
+  any(ir.ref('WS')),
+  ir.ref('value'),
+  any(ir.ref('WS')),
 ));
 
 window._ir = ir;

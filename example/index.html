@@ -4,4 +4,16 @@
     <script src='bundle.js'></script>
   </head>
   <body></body>
+  <script>
+    function print(ast) {
+      var pre = document.createElement('pre');
+      pre.innerText = JSON.stringify(ast, null, 2);
+      document.body.appendChild(pre);
+    }
+
+    var ast = _ir.parse('   {ao:23, bo: [], co: [2, 4, [6]],      d2:{ao: { bo: { co: { de: 23,}}}}}   ');
+    console.log('   {ao:23, bo: [], co: [2, 4, [6]],      d2:{ao: { bo: { co: { de: 23,}}}}}   ');
+    console.log(ast);
+
+  </script>
 </html>
