@@ -71,7 +71,7 @@ ir.decl('name',
       alternative(
         ir.ref('ALPHABET'),
         ir.ref('DIGIT'),
-        text('_')
+        chars('$', '_')
       )
     )
   ),

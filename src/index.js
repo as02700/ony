@@ -23,7 +23,7 @@ var nthArg = memoriezWith(
 );
 
 // ==================================================
-// predicate
+// predicate :: (input: {input: string}, cursor: number) -> number | undefined
 // ==================================================
 
 var text = memoriezWith(
@@ -55,7 +55,8 @@ var chars = memoriezWith(
 );
 
 // ==================================================
-// combination
+// Predicate :: (input: {input: string}, cursor: number) -> number | undefined
+// combination :: (...Predicate) -> Predicate
 // ==================================================
 
 function series() {
@@ -92,7 +93,8 @@ function alternative() {
 }
 
 // ==================================================
-// decorator
+// Predicate :: (input: {input: string}, cursor: number) -> number | undefined
+// decorator :: Predicate -> Predicate
 // ==================================================
 
 function not(func) {
