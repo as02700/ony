@@ -23,9 +23,10 @@ var nthArg = memoriezWith(
 );
 
 // ==================================================
-// predicate :: (input: {input: string}, cursor: number) -> number | undefined
+// predicate
 // ==================================================
 
+// text :: (text: String) => (input: {input: String}, cursor: number) => number | undefined
 var text = memoriezWith(
   nthArg(0),
   function text(_text) {
@@ -41,6 +42,7 @@ var text = memoriezWith(
   }
 );
 
+// text :: (...char: String) => (input: {input: String}, cursor: number) => number | undefined
 var chars = memoriezWith(
   function() {
     return Array.prototype.slice.call(arguments).join('');
@@ -55,10 +57,11 @@ var chars = memoriezWith(
 );
 
 // ==================================================
-// Predicate :: (input: {input: string}, cursor: number) -> number | undefined
-// combination :: (...Predicate) -> Predicate
+// Combination
 // ==================================================
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// series :: (...func: Predicate) => Predicate
 function series() {
   var funcs = Array.prototype.slice.call(arguments);
   var len = funcs.length;
@@ -76,6 +79,8 @@ function series() {
   };
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// alternative :: (...func: Predicate) => Predicate
 function alternative() {
   var funcs = Array.prototype.slice.call(arguments);
   var len = funcs.length;
@@ -93,10 +98,11 @@ function alternative() {
 }
 
 // ==================================================
-// Predicate :: (input: {input: string}, cursor: number) -> number | undefined
-// decorator :: Predicate -> Predicate
+// decorator
 // ==================================================
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// not :: (func: Predicate) => Predicate
 function not(func) {
   return function(input, cursor) {
     var r = func(input, cursor);
@@ -104,6 +110,8 @@ function not(func) {
   };
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// must :: (func: Predicate) => Predicate
 function must(func) {
   return function(input, cursor) {
     var r = func(input, cursor);
@@ -111,6 +119,8 @@ function must(func) {
   };
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// option :: (func: Predicate) => Predicate
 function option(func) {
   return function(input, cursor) {
     var r = func(input, cursor);
@@ -118,6 +128,8 @@ function option(func) {
   }
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// more :: (func: Predicate) => Predicate
 function more(func) {
   return function(input, cursor) {
     var len = input.input.length;
@@ -133,6 +145,8 @@ function more(func) {
   };
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// any :: (func: Predicate) => Predicate
 function any(func) {
   return function(input, cursor) {
     var len = input.input.length;
@@ -165,6 +179,8 @@ function Declaration(entry) {
   this.__entry = entry;
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// decl :: (name: String, func: Predicate) => void
 Declaration.prototype.decl = function(name, func) {
   this.__declarations[name] = func;
 };
@@ -173,6 +189,8 @@ Declaration.prototype.__ref = function(name, input, cursor) {
   return this.__declarations[name](input, cursor);
 };
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// ref :: (name: String) => Predicate
 Declaration.prototype.ref = function(name) {
   return this.__ref.bind(this, name);
 };
@@ -187,6 +205,8 @@ Declaration.prototype.__useMark = function(name, input, cursor) {
   return text(this.__markTexts[name])(input, cursor);
 }
 
+// Predicate :: (input: {input: String}, cursor: number) => number | undefined
+// mark :: (name: String, func?: Predicate) => Predicate
 Declaration.prototype.mark = function(name, func) {
   if (arguments.length > 1) {
     this.__markDecls[name] = this.__useMark.bind(this, name);
@@ -196,6 +216,7 @@ Declaration.prototype.mark = function(name, func) {
   }
 };
 
+// parse :: (text: String) => number | undefined
 Declaration.prototype.parse = function(text) {
   return this.__declarations[this.__entry]({input: text}, 0);
 };
