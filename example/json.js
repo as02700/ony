@@ -158,3 +158,29 @@ window._ir = ir;
 ir.test = function(name, input) {
   return this.declaration.__declarations[name]({input}, 0);
 };
+
+/*
+function tap(tag, func) {
+  return function() {
+    var result = func.apply(this, arguments);
+    console.log(tag, result);
+    return result;
+  };
+}
+
+var tar = window._tar = new IR('root');
+tar.decl('kw', tap('/kw', text('return')));
+tar.decl(
+  'root',
+  alternative(
+    series(
+      tap('/1', tar.ref('kw')),
+      tap('/2', text('@@'))
+    ),
+    series(
+      tap('/3', tar.ref('kw')),
+      tap('/4', text('##'))
+    ),
+  )
+);
+*/

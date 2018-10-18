@@ -237,6 +237,7 @@ function IR(entry) {
   this.declaration = new Declaration(entry);
   this.tokensStack = [[]];
   this.parseStack = [];
+  this.parseResult = {};
 }
 
 IR.prototype.in = function() {
@@ -256,7 +257,11 @@ IR.prototype.out = function(func, input, cursor, len) {
 IR.prototype.__aspect = function(ctor, func, name, input, cursor) {
   ctor && this.in();
   var i = this.parseStack.push([cursor]);
-  var len = func(input, cursor);
+  var key = [cursor, name].join(',');
+  var len = this.parseResult[key];
+  if (len == undefined) {
+    len = this.parseResult[key] = func(input, cursor);
+  }
   this.parseStack[i - 1].push(len, name);
   ctor && this.out(ctor, input, cursor, len);
   return len;
@@ -277,6 +282,7 @@ IR.prototype.mark = function() {
 IR.prototype.parse = function(text) {
   this.tokensStack = [[]];
   this.parseStack = [];
+  this.parseResult = {};
   var total = text.length;
   var consumed = this.declaration.parse(text);
   if (consumed == total) {
