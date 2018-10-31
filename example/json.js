@@ -52,6 +52,7 @@ ir.decl('UPPER_CASES', chars.apply(null, upperCases));
 ir.decl('ALPHABET', alternative(ir.ref('LOWER_CASES'), ir.ref('UPPER_CASES')));
 ir.decl('DIGIT', chars.apply(null, digits));
 ir.decl('DIGITS', more(ir.ref('DIGIT')));
+
 ir.decl('number',
   series(
     option(chars('+', '-')),
@@ -79,17 +80,15 @@ ir.decl('name',
 );
 ir.decl('null', text('null'), NullLiteral);
 ir.decl('string',
-  alternative(
-    series(
-      ir.mark('$quote', chars('"', "'")),
-      any(
-        alternative(
-          series(text('\\'), ir.mark('$quote')),
-          not(ir.mark('$quote'))
-        )
-      ),
-      ir.mark('$quote')
+  series(
+    ir.mark('$quote', chars('"', "'")),
+    any(
+      alternative(
+        series(text('\\'), ir.mark('$quote')),
+        not(ir.mark('$quote'))
+      )
     ),
+    ir.mark('$quote')
   ),
   StringLiteral
 );
