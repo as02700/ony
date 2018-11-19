@@ -2,7 +2,7 @@
 // utils
 // ==================================================
 
-function memoriezWith(kFunc, func) {
+function memoizeWith(kFunc, func) {
   var cache = {};
   return function() {
     var k = kFunc.apply(this, arguments);
@@ -13,7 +13,7 @@ function memoriezWith(kFunc, func) {
   };
 }
 
-var nthArg = memoriezWith(
+var nthArg = memoizeWith(
   function() {return arguments[0];},
   function(n) {
     return function() {
@@ -27,7 +27,7 @@ var nthArg = memoriezWith(
 // ==================================================
 
 // text :: (text: String) => (input: {input: String}, cursor: number) => number | undefined
-var text = memoriezWith(
+var text = memoizeWith(
   nthArg(0),
   function text(_text) {
     var len = Math.max(_text.length, 1);
@@ -43,7 +43,7 @@ var text = memoriezWith(
 );
 
 // text :: (...char: String) => (input: {input: String}, cursor: number) => number | undefined
-var chars = memoriezWith(
+var chars = memoizeWith(
   function() {
     return Array.prototype.slice.call(arguments).join('');
   },
@@ -167,7 +167,7 @@ function any(func) {
 function Declaration(entry) {
   this.decl = this.decl.bind(this);
   this.__ref = this.__ref.bind(this);
-  this.ref = memoriezWith(nthArg(0), this.ref).bind(this);
+  this.ref = memoizeWith(nthArg(0), this.ref).bind(this);
   this.__declMark = this.__declMark.bind(this);
   this.__useMark = this.__useMark.bind(this);
   this.mark = this.mark.bind(this);
